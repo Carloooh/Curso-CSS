@@ -1,0 +1,739 @@
+<!-- 
+    recursos para aprender css : lenguajecss.com/css, web.dev CSS y mdn CSS
+    Utilizo como base el mismo HTML del curso anterior
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso CSS por Midudev</title>
+
+    <meta name="description" content="Web de práctica para curso de HTML incluyendo aspectos como SEO, etiquetas, atributos y buenas prácticas impartido en el canal de Twitch y YouTube de Midudev, Ingeniero de Software senior con más de 15 años de experiencia.">
+    <meta property="og:title" content="Web de práctica HTML"> 
+    <meta property="og:description" content="Web de práctica para curso de HTML"> 
+    <meta property="og:image" content="/images/me.jpg">
+    <meta property="og:image:alt" content="Imagen mia">
+    
+    <link rel="alternate" href="https://miweb.com/eng" hreflang="en-GB">
+    <link rel="canonical" href="https://miweb.com">
+
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0f9">
+
+    <link rel="icon" type="image/jpg" href="/images/me.jpg">
+
+    <!-- 
+        Etiqueta que permite aplicar estilos CSS dentro de un HTML, se puede poner en cualquier lugar, lo correcto es en el head 
+
+        Estructura:
+            selector {
+                propiedad: valor;
+            }
+
+        Los valores se pueden sobreescribir, y los que se aplican son los últimos (Cascada).
+        Existe la especificidad para evitarlo, pero hay formas de saltarse la especifidad. (Existen calculadoras de especificidad)
+
+        Ejemplo de Fallback aplicando cascada, si no se puede aplicar el último color, se utiliza el anterior
+        element {
+            color: #09f
+            color: oklch(70% 0.244 237.71)
+        }
+
+        Evitar aplicar estilos por etiquetas o id, siempre por clases
+
+
+        element:first-child
+        element:last-child
+        element:nth-child(numero)
+
+        Operadores de combinación: 
+            element > element relación de primer grado
+            element ~ element relaciones generales
+            element + element relacion adyacente (elemento inmediato)
+
+        color: rgba(0,0,0,.1); Legacy, NO se recomienda, mejor hexadecimal, rgb, hsl y oklch, etc... 
+        color: rgb(0 0 0 / 50%)  recomendado
+
+        Modelo de la "caja":
+        width - height (alto y ancho, depende del padding, border)
+        background (fondo)
+        padding (espacio al rededor del contenido, separación entre contenido y borde del contenedor)
+        border (borde del contenedor)
+        margin (separación del contenedor)
+        box-sizing (content-box por defecto, border-box permite que la caja sea del tamaño definido sin que afecte el padding y borde)
+        overflow (hidden, visible, scroll, auto, para controlar cuando el contenido es más grande que la caja)
+        text-overflow (clip, ellipsis, controla el texto en caso de overflow)
+        scroll bar css playground (estilar el scroll)
+        
+        Position:
+            static (por defecto, fijo)
+            absolute (se mueve libre dentro del primer padre)
+            relative (punto de referencia, actua como padre para absolute)
+            fixed (se queda fijo en la pantalla (en el vh, viewport), no se mueve nunca al hacer scroll, ignora al relative)
+            sticky (se queda pegado dentro del padre, siempre que pueda se queda pegado, al scrollear se mueve hasta llegar al final)
+
+            centrar div con inset: 0 y margin: auto
+        
+        La web es "3d", los elementos se apilan en capas y hay unos que quedan sobre otros, por ejemplo:
+            position: fixed; queda encima de los elementos, pero puede quedar a la vez abajo de otros, tiene que ver con los padres e hijos
+            esto se puede solucionar con z-index: numero; entre más alto elnúmero, más prioridad para quedar por encima
+            se requiere contexto/stack de apilamiento, por ejemplo otros elementos relative sobre los que posicionarse
+            se puede estudiar y analizar las capas de la web para saber el número adecuado a utilizar y herramientas como View 3D de edge 
+
+        Display
+
+            Depende del contexto el utilizar flex y grid, 
+            para diseños bidimensional utilizar grid
+            para diseño unidimensional, flex, aunque grid se podría utilizar aunque de complicaciones
+
+            Flex (unidimensional)
+            Hay elementos en linea (se comportan como texto, display: inline, span lo tiene por defecto, elementos de posicionan al lado) 
+            y bloques (caja, contenedor)
+            div trae display: block; por defecto 
+            
+            inline (se posicionan al lado en la misma linea, se comporta como texto)
+            block (se posicionan debajo)
+            flex (acomoda los elementos eficientemente segun el espacio disponible, el flex va en el padre)
+                direction, writing-mode (dirección del texto)
+                flex-direction (una dirección, solo un eje, horizontal o vertical, columa o fila, se puede invertir)
+                flex-wrap (ajusta el contenido dentro del padre, reduce el tamaño o salto de linea si no caben los elementos)
+                flex-flow (abreviación para flex-direction y flex-wrap en una sola linea)
+
+                van en los hijos estas propiedades!
+                flex-grow (0,1 indica si los elementos pueden crecer o no)
+                flex-shrink (0,1 indica si los elementos pueden reducir su tamaño a un tamaño más pequeño que flex-basis)
+                flex-basis (tamaño base, auto se adapta segun el tamaño original, 0 todos con el mismo tamaño)
+                flex: auto; (forma abreviada para que el contenido se adapte al tamaño del contenedor, manteniendo el tamaño original segun el contenido)
+                flex: 1 ; (forma abreviada para que el contenido se adapte al tamaño del contenedor, todos con el mismo tamaño
+                            si se utiliza 2 3 4... cambia el tamaño del elemento)
+                order (1, 2, 3.... para cambiar el orden de los items)
+                
+            Posicionamiento
+                justify-content ( flex-start/end center, space-between/around/evenly... alinea el contenido horizontalmente en el eje principal flex-direction, esto va en el padre)
+                align-content (alinea el contenido verticalmente, dentro de la fila)
+                align-items (alinea el contenido en el eje cruzado, vertical y horizotalmente)
+                gap (espacio entre ELEMENTOS, NO laterales)
+
+                align-self (alinear item individualmente - va en el item)
+        
+
+            Grid (bidimensional)
+                cuadricula con elementos de tamaño fijo o flexible
+                posicionar elementos en cualquier parte de la cuadricula e incluso sobre otros elementos
+
+                display: grid; (en el contenedor para definir la cuadricula)
+                grid-template-columns: 50% 100px auto 10vh 1fr... (en el contenedor para definir n° columnas y su tamaño)
+                grid-template-rows: 50% 100px auto 10vh 2fr... (en el contenedor para definir n° filas y su tamaño) 
+
+                NO es recomendable utilizar mezclar unidades! mejor utilizar fr (fracciones para definir el tamaño)
+
+                grid-auto-rows (asignar tamaño default al generar filas automáticamente)
+                repeat(cantidad, unidad) (para repetir no escribir muchas veces lo mismo, se puede usar varias veces en la linea)
+                repeat(cantidad, unidad unidad) (para repetir cuando hay patrones)
+                minmax(100px, 1fr) (cuando el espacio sea menor a 100px mantiene su tamaño de 1fr, y los demás se adecuan al restante)
+                grid-column/row-gap (forma adecuada de asignar espacio entre columnas y filas) grid-gap (abreviacion de ambas)
+                grid-template-columns: repeat(auto-fill/fit, minmax(200px, 1fr)); (responsividad del grid)
+                    auto-fill (no ocupa todo el espacio, quedaría en blanco si no hay más elementos, ajusta) recomendable para no romper el espacio
+                    auto-fit (ocupa todo el espacio que quedaria en blanco si no hay más elementos)
+                grid-column-start: 1; grid-column-end: 3; (acomodar elemento en columna a gusto)
+                grid-row-start: 1; grid-row-end: 3; (acomodar elemento en fila a gusto)
+                    grid-row/column-start: span 2 3... (abreviación para decirle cuantos espacios utilizar)
+                        grid-row/column: 2 / 4 (abreviación sin el -start)
+                    (los numero corresponden al numero de la linea de fila/columna)
+                    (se puede utilizar 1 / -1 para usar todo el espacio)
+                    (
+                        se pueden sobreponer elementos si a 2 o + elementos se le dan las mismas coordenadas
+                        esto es util para animaciones con hover utilizando el z-index
+                    )
+
+                grid-area: nombre (asignar nombre a elemento de un grid)
+
+                grid-area: 1 / 2 / 3 / 4: grid-row-start, grid-column-start, grid-row-end, followed by grid-column-end.
+
+                Ejemplos:
+
+                (grid imagenes responsive)
+                img {
+                    width: 100%;
+                    height: auto;
+                    border-radius: 10px;
+                }
+
+                div {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                    grid-gap: 10px;
+                }
+
+
+                (dibujar un grid de forma fácil y legible, si se pone un . en vez de un nombre, no se dibuja nada, queda vacio)
+                .container {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    grid-template-rows: 75px 1fr 75px;
+                    min-height: 100vh;
+                    grid-template-areas: 
+                        "header header aside"
+                        "main main main"
+                        "footer footer footer";
+                    }
+
+                @media (width > 400px) { (grid responsivo para web y movil)
+                    .container {
+                        grid-template-areas: 
+                            "header header header"
+                            "aside main main"
+                            "footer footer footer";
+                    }
+                }
+
+                Alineación
+
+                Afecta a las celdas individuales dentro de la cuadrícula:
+                    justify-items (alinea items EN LA LINEA - horizontal) 
+                        justify-self (alinear item individual)
+                    
+                    align-items (alineación items EN COLUMNA - vertical )
+                        alifn-self (alinear item individual)
+
+                Afecta a toda la cuadrícula en conjunto.
+                    justify-content (alinear cuadricula BLOQUE - horizontal)
+                    align-content (alinear cuadricula BLOQUE - vertical )
+                        place-content: center; (abreviación align-content y justify-content)
+
+        Transiciones
+            Cambiar un elemento que transiciona entre un estado inicial a un estado objetivo
+            Se requiere interactuar con el elemeto
+            En mdn animable css property está el listado de elementos animables
+            
+            Por temas de accesibilidad, a veces hay que desactivar transiciones o hacerlas más amigables/discretas (largas, suaves, menos agresivas)
+                (esta media query la elimina si es que el usuario lo prefiere, config de navegador/sistema)
+                @media (prefers-reduced-motion: reduce/no-preference) {
+                    element {
+                        transition: none;
+                    }
+                }
+
+
+            scale (ocupa mismo espacio, es solo visual, w y h si ocupan mas espacio)
+            transition-time (duración de la transicion, debe ir en el objeto a animar, NO en el estado)
+            transition-property (elegir que propiedades animar, por defecto se animan todas, ayuda al rendimiento y evitar problemas de ui/ux)
+            transition-timing-function (cambiar velocidad de animacion en distintas etapas - al inicio, medio, final, etc... )
+                steps() (cantidad de pasos para la fluidez de la animacion)
+                cubic-bezier (controlar manualmente velocidad de animación en distintas etapas, hay herramientas para crearlas)
+            transition-delay (elegir en que momento empezar la transición, puede servir para loaders o mostrar distitos elementos en distinto timing)
+                transition: (abreviación, background duracion animacion delay, pueden ir distan propiedades en distinto orden)
+                    
+                Ejemplo: (propiedades de un elemento con distintas animaciones)
+                    element {
+                        background; #09f;
+                        transition: background 300ms linear, scale 500ms ease-in-out, box-shadow 500ms ease 1s;
+                        transition: all 300ms linear 1s; Esta es la forma de aplicarlo a todos los elementos
+                    }
+                    element:hover{
+                        scale: 2;
+                        background: red;
+                        box-shadow: 0 0 10px blue;
+                        transition-duration: 1s; (una forma de que entrada y salida tenga distinta animación)
+                    }
+            
+
+        Animaciones
+            Animaciones de elementos sin interactuar con ellos
+
+            
+            animation/animation-name: nombre (nombre de la animacion a usar)
+            animation-duration (duracion de la animacion)
+            animation-iteration-count (cantidad de repeticiones de la animacion)
+            animation-delay (delay para la ejecucion de la animacion)
+            animation-play-state (cambiar estado de la animacion - se puede pausar por ejemplo)
+            animation-range (establece en la línea de tiempo donde comenzará y terminará una animación)
+            animation-fill-mode 
+                (
+                    controla donde queda el elemento, 
+                    none, backwards para posicion inicial, forwards posicion final, 
+                    both el elemento usa frame inicial o final dependiendo donde esté
+                )
+            animation-direction 
+                (   direccion de la animación 
+                    se puede hacer una animacion y ponerla en reversa, alternar, normal, reverse-alternate etc...
+                )
+            animation (Abreviación - name duration timing-function/steps(N°) delay direction fill-mode)
+
+            EJEMPLOS ANIMACIONES:
+
+                1) .element {
+                    animation: nombre;
+                    animation-duration: 3s;
+                    }
+
+                @keyframes nombre {
+                    from {
+                        transform: translateY(0px); /* empieza en su lugar, estado inicial */
+                    } 
+                    to {
+                        transform: translateY(100px);  /* traslada su posicion en el eje Y 100 px, se puede poner -100px y va al reves */
+                    }
+                }
+
+
+                2) element::after {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    top: 0;
+                    left: 0;
+                    background: #0099ff;
+                    border-radius: 50%;
+                    z-index: -1;
+                    scale: 2;
+                    animation: pulse;
+                    animation-duration: 1s;
+                    animation-timing-function: ease-in-out;
+                    animation-iteration-count: infinite;
+                }
+
+    
+                @keyframes pulse {
+                    0% {  opacity: 0; }
+                    50% {
+                        opacity: .4;
+                        scale: 2;
+                    }
+                    100% {
+                        opacity: 0;
+                        scale: 1;
+                    }
+                }
+                    Los porcentajes se refieren al porcentaje de ejecucion de la animacion
+                    0% al inicio
+                    50% cuando al animacion vaya por la mitad de su ejecucion
+                    100% cuando la animacion haya terminado
+
+                3) element {
+                    width: 80px;
+                    animation: 
+                        mover 2s steps(10) infinite both,
+                        agrandar 1s linear 2s backwards;
+                    
+                    &:hover { /* CSS nesting, lo mismo que element:hover, 80% soporte navegadores*/
+                        animation-play-state: paused;
+                        opacity: .7;
+                        cursor: progress;
+                    }
+                }
+
+                element:nth-child(2) {
+                    animation: agrandar 1s linear infinite backwards;
+                    position: absolute;
+                    margin-top: 150px;
+                }
+
+                @keyframes mover {
+                    /* estado inicial NO es necesario declarar, a menos que se quiera declarar alguna propiedad */
+                    to { transform: translateX(100px); }
+                }
+
+                @keyframes agrandar {
+                    0% { scale: 1; }
+                    25% { scale: 1.4; }
+                    50% { scale: 2; }
+                    75% { scale: 1.6; }
+                    100% { scale: 2; }
+                }
+
+            4) Animation progress-scroll-loader
+            <div id="progress"></div>
+
+            body{
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                margin: 0;
+            }
+
+            main {
+                padding: 32px;
+            }
+
+            #progress {
+                position: fixed;
+                top: 0;
+                width: 0%;
+                background: red;
+                height: 1em;  
+
+                animation: progress-grow auto linear;
+                animation-timeline: scroll(root block);
+                /* 60% compatibilidad scroll detection, se puede usar Polyfill con JS para simularlo en navegadores no compatibles 
+                Se puede definir que scroll escuchar, documento, elemento, horizontal, vertical, etc...
+                block viene por defecto, se puede quitar y dejar solo root
+                */
+            }
+
+            @keyframes progress-grow {
+                from { width: 0% }
+                to { width: 100% }
+            }
+
+            5) ANIMACION GALERIA IMAGENES
+            <h1>Curso CSS</h1>
+            <section>
+                <img>
+                <img>....
+            </section>
+
+            body{
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                margin: 0;
+                background: black;
+                padding-bottom: 100px;
+            }
+
+            h1 {
+                color: white;
+                text-align: center;
+                padding: 16px;
+                margin: 0;
+                width: 100%;
+                position: sticky;
+                top: 0;
+                left: 0;
+
+                animation: enhance-header linear both;
+                animation-timeline: scroll(root);
+                animation-range: 0 150px;
+
+                z-index: 1;
+            }
+
+            section {
+                padding: 16px 32px;
+                columns: 2;
+                column-gap: 32px;
+            }
+
+            section img {
+                border-radius: 10%;
+                margin-bottom: 32px;
+                width: 100%;
+                height: auto;
+
+                animation: reveal linear both;
+                animation-timeline: view(); /* Funciona cuando la imagen se vea completa */
+                animation-range: entry 20% cover 50%; /* cuando la imagen se vea un 20% se inicia la animacion y el final es cuando en el VH (viewport) se vea un 50% */
+            }
+
+            @keyframes enhance-header {
+                to {
+                    background: rgba(255, 255, 255, .4);
+                    backdrop-filter: blur(5px);
+                    font-size: 18px;
+                    color: black;
+                }
+            }
+
+            @keyframes reveal {
+            from { 
+                    opacity: 0; 
+                    translate: 0 100px;
+                    scale: .5;
+                }
+            to { 
+                    opacity: 1; 
+                    translate: 0 0;
+                    scale: 1;
+                }
+            }  
+
+
+
+        Pseudoelementos
+                permiten insertar contenido antes y despues del contenido de un elemento seleccionado
+                permite agregar elementos decorativos o contenido adicional al diseño sin modificar la estructura del HTML
+            element::after { = ''; } (agrega contenido al final del contenido)
+            element::before { = 'contenid...'; }(agrega contenido al inicio del contenido, si son comillas el navegador las puede cerrar automaticamete)
+
+            ejemplos: 
+                <ul>
+                    <li class="done">Comprar leche</li>
+                    <li>Hacer ejercicio</li>
+                    <li class="done">Pasear al perro</li>
+                </ul>
+
+                li.done::after {
+                    content: "\2713"; /* Código Unicode para la marca de verificación */
+                    margin-left: 0.5em;
+                }
+
+                Resultado:
+                    Comprar leche ✔
+                    Hacer ejercicio
+                    Pasear al perro ✔
+
+                <p class="quote">Este es un texto citado.</p>
+
+                .quote::before {
+                content: "«";
+                }
+
+                Resultado: «Este es un texto citado.» // se agrega el » de cierre automaticamente por ser comillas
+    -->
+
+    <style>    
+        h1 { /* Por nombre de etiqueta, aplica estilo a TODOS los elementos que coincidan */
+            color: #0099ff;
+            font-family: monospace;
+        }
+
+        body { /* body aplica a todo el cuerpo del documento */
+            background: rgb(231, 241, 183);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif /* va con herencia, y carga de izquierda a derecha hasta que se encuentre una, Fallback */
+        }
+
+        #link { /* Selector por id, aplica estilo al elemento con esa id */
+            color: #ff0000;
+        }
+
+        .description {
+            border: 1px solid red; /* forma de abreviar width, color y style, borde no se hereda, hay propiedades como inherit para forzarlo */
+        }
+    
+        li:first-child, li:last-child {
+            color: pink;
+        }
+
+        .link { /* Selector por clases, aplica estilo a los elementos que tengan esa clase */
+            color: #ff0000;
+        }
+
+        /* aplica al estado de la clase, pseudoclases, hay herramientas en el inspector para forzar las clases y ver los estilos */
+        .link:hover { 
+            outline: 3px solid yellow; /* outline afecta al contenido, border al contenedor */
+        }
+
+        .link:active {
+            outline: 3px solid green;
+        }
+
+    </style>
+
+</head>
+<body>
+    <header>
+        <h1>Carlos Azocar</h1>
+
+        <nav>
+            <a class="link" href="#experiencia">Experiencia</a>
+            <a class="link" href="#proyectos">Proyectos</a>
+            <a 
+                class="link"
+                href="https://portfolio-carlos-azocar.vercel.app/" 
+                target="_blank"
+                rel="noreferrer">
+                Portfolio
+            </a> 
+        </nav>
+    </header>
+
+    <main> 
+        <p class="description">Joven egresado de ingeniería en informática, <strong>Full Stack Developer</strong> <em>Junior</em> dedicado y proactivo.</p>
+        <h2 id="experiencia">Experiencia</h2>
+
+        <ul>
+            <li class="list-item">Duoc UC - 2023</li>
+            <li class="list-item">TV Costa - 2023</li>
+        </ul>
+
+        <a download href="/images/me.jpg"> 
+            <img 
+                id="my-image"
+                width="200"
+                height="200"
+                src="/images/me.jpg" 
+                title="Una foto de Carlos Azocar" 
+                alt="Una fotogragía de Carlos Azocar usando un traje"
+            >
+        </a>
+
+        <video
+            width="200"
+            height="200" 
+            src="https://media.istockphoto.com/id/1413207061/es/v%C3%ADdeo/tr%C3%A1fico-por-carretera-en-delhi-roads.mp4?s=mp4-640x640-is&k=20&c=A1-lCxgn52e92K43RQ49ZOQCHg5skyzFCZd05ctsBIg="
+            controls
+        >
+        </video>
+
+        <audio 
+            controls 
+            src="https://essentials.pixfort.com/original/wp-content/uploads/sites/4/2020/02/skanews.wav"
+        >
+        </audio>
+
+        <iframe 
+            style="width: 100%; aspect-ratio: 16/9;"
+            width="560" 
+            height="315" 
+            src="https://www.youtube.com/embed/RXKabdUBiWM?si=Vc4J0hdWalBa-d9s" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin" 
+            allowfullscreen
+        >
+        </iframe>
+
+        <div role="button">
+            Haz click aquí
+        </div>
+
+        <dialog id="dialogmodal">
+            <h1>¿Sabías que se puede abrir un modal así?</h1>
+            <p>Y es totalmente nativo</p>
+            <button id="closemodal">Cerrar modal</button>
+        </dialog>
+
+        <button id="openmodal">Ver más informacion</button>
+
+        <script>
+            window.openmodal.addEventListener('click', () => {
+                window.dialogmodal.showModal();
+            })
+            window.closemodal.addEventListener('click', () => {
+                window.dialogmodal.close();
+            })
+        </script>
+
+        <h2 id="proyectos">Proyectos realizados</h2>
+
+        <aside>
+            <header>
+                <h3>Mis tecnologias favoritas</h3>
+            </header>
+
+            <ol type="1" reversed start="10">
+                <li>HTML</l>  
+                <li>CSS</li>  
+                <li value="5">JavaScript</li>
+                <li>Node.js</li> 
+            </ol>
+        </aside>
+
+        <section> 
+            <article> 
+                <header>
+                    <h4>Sitio Web Corporativo</h4>
+                </header>
+                <p>
+                    Desarrollo de un sitio web corporativo con interfaz amigable y moderna.
+                </p>
+                <footer>
+                    <small>Tecnologias utilizadas: HTML, CSS y JS</small>
+                </footer>
+            </article>
+            <article>
+                </header>
+                    <h4>Aplicacion web e-commerce</h4>
+                </header>
+                <p>
+                    Creacion de una tienda para un negocio local
+                </p>
+                <footer>       
+                    </small>Tecnologias utilizadas: React, Node y MondoDB</small>
+                </footer>
+            </article>
+            <article>
+                <header>
+                    <h4>Página de tesla</h4>
+                    <img 
+                        style="width: 100%; aspect-ratio: 638/317;"
+                        loading="lazy"
+                        src="/images/tesla.png" 
+                        alt="imagen pagina de tesla"
+                    > 
+                </header>
+                <p>
+                    Creacion de la pagina de tesla desde 0
+                </p>
+                <footer>
+                    <small>Tecnologias utilizadas: Astro, React y JS</small>
+                </footer>
+            </article>
+        </section>
+
+        <section>
+            <h2>Preguntas Frecuentes</h2>
+            <details open>
+                <summary>¿Que estudios tienes?</summary>
+                <p>Estudié en Duoc UC en Chile Ingeniería Informática durante 4 años.</p>
+            </details>
+            <details>
+                <summary>¿Que lenguaje te gusta más?</summary>
+                <p>Me gusta Python y JS</p>
+            </details>
+            <details>
+                <summary>¿Hobbies?</summary>
+                <p>Escuchar musica</p>
+            </details>
+        </section>
+
+        <section>
+            <h2>Formulario de contacto</h2>
+            <form action="/" method="post">
+                <fieldset>
+                    <legend>Información personal</legend>
+                    <label>Nombre: 
+                        <input type="text" name="name" placeholder="Tu Nombre" required>
+                    </label>
+                    <br> 
+                    <label>Email:
+                        <input type="email" name="email" placeholder="tuemail@email.com" required>
+                    </label>
+                </fieldset>
+                <fieldset>
+                    <legend>Información adicional</legend>
+                    <div>
+                        <label>Telefono:
+                            <input type="tel" name="telefono" placeholder="+56912345678" pattern="[0-9]{9}" required>
+                        </label>
+                    </div>
+                    <label>Motivo:
+                        <input type="text" name="motivo" placeholder="Motivo de tu mensaje..." required>
+                    </label>
+                </fieldset>
+                <fieldset>
+                    <legend>Otros</legend>
+                    <label for="why">Motivo del contacto:</label>
+                    <select name="why" id="why">
+                        <option value="1">trabajo</option>
+                        <option value="2">duda</option>
+                        <option value="3">más informacion</option>
+                    </select>
+                    <label for="terms">¿Aceptas los terminos?</label>
+                    <input id="terms" type="checkbox" name="tyc" required>
+                </fieldset>
+                <div>
+                    <datalist id="languages">
+                        <option value="JavaScript"></option>
+                        <option value="Python"></option>
+                        <option value="Java"></option>
+                        <option value="C#"></option>
+                    </datalist>
+                    <label>¿Con cuál lenguaje necesitas ayuda?
+                        <input list="languages" name="languages">
+                    </label>
+                </div>
+                <button>Enviar Mensaje</button>
+            </form>
+        </section>
+    </main>
+    
+    <footer>
+        <small>Copyright @2024 - Práctica HTML</small>
+        <a href="mailto:carlos.iah17@gmail.com">Envíame un email</a>
+        <a href="tel:+56997766050">Llámame por celular</a>
+        <a href="whatsapp://send?text=Hola!">Enviame un whatsapp</a>
+    </footer>
+</body>
+</html>
